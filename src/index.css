@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/* ── Fuentes Mijarepas ── */
+@font-face {
+  font-family: 'Chreed';
+  src: url('/fonts/Chreed-Black.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Healing';
+  src: url('/fonts/Healing.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Brinnan';
+  src: url('/fonts/Brinnan Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ── Variables de color ── */
+:root {
+  --terrocana:    #42261a;
+  --fucsebollita: #eb1e55;
+  --ocanoro:      #f9ac31;
+  --boleblanco:   #fff1d2;
+  --verdevos:     #007d3e;
+  --ajazul:       #00afec;
+}
+
+/* ── Reset base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Brinnan', system-ui, sans-serif;
+  background-color: var(--boleblanco);
+  color: var(--terrocana);
+  min-height: 100dvh;
+}
+
+/* ── Clases utilitarias de fuentes ── */
+.font-chreed  { font-family: 'Chreed', sans-serif; }
+.font-healing { font-family: 'Healing', sans-serif; }
+.font-brinnan { font-family: 'Brinnan', sans-serif; }
+
+/* ── Animación: borde pulsante pedido recibido ── */
+@keyframes pulse-border {
+  0%, 100% { border-left-color: #eb1e55; }
+  50%       { border-left-color: transparent; }
+}
+.pedido-recibido {
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+/* ── Animación: flash columna nuevo pedido ── */
+@keyframes column-flash {
+  0%   { background-color: rgba(235, 30, 85, 0.18); }
+  100% { background-color: transparent; }
+}
+.column-flash {
+  animation: column-flash 0.8s ease-out;
+}
+
+/* ── Scrollbar delgado en columnas ── */
+.kanban-col {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(66, 38, 26, 0.2) transparent;
+}
+.kanban-col::-webkit-scrollbar { width: 4px; }
+.kanban-col::-webkit-scrollbar-thumb {
+  background: rgba(66, 38, 26, 0.2);
+  border-radius: 2px;
+}
