@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 
 const EMPTY_FORM = {
@@ -24,6 +24,9 @@ export default function PromocionesPanel() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(null)
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const fileInputRef = useRef(null)
 
   // ── Cargar promos ──
   const fetchPromos = async () => {
@@ -38,10 +41,41 @@ export default function PromocionesPanel() {
 
   useEffect(() => { fetchPromos() }, [])
 
+  // ── Subir imagen a Supabase Storage ──
+  const subirImagen = async (file) => {
+    const fileName = `promo-${Date.now()}-${file.name}`
+    const { data, error } = await supabase.storage
+      .from('promociones')
+      .upload(fileName, file)
+    if (error) throw error
+    return `https://whqgocniizugylxcyznd.supabase.co/storage/v1/object/public/promociones/${fileName}`
+  }
+
+  // ── Eliminar imagen del bucket ──
+  const eliminarImagenStorage = async (url) => {
+    if (!url || !url.includes('/storage/v1/object/public/promociones/')) return
+    const fileName = url.split('/storage/v1/object/public/promociones/')[1]
+    if (fileName) {
+      await supabase.storage.from('promociones').remove([fileName])
+    }
+  }
+
+  // ── Seleccionar archivo de imagen ──
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setImageFile(file)
+    const reader = new FileReader()
+    reader.onload = (ev) => setImagePreview(ev.target.result)
+    reader.readAsDataURL(file)
+  }
+
   // ── Abrir form nueva ──
   const handleNueva = () => {
     setForm(EMPTY_FORM)
     setEditingId(null)
+    setImageFile(null)
+    setImagePreview(null)
     setShowForm(true)
   }
 
@@ -58,6 +92,8 @@ export default function PromocionesPanel() {
       activa: promo.activa ?? true,
     })
     setEditingId(promo.id)
+    setImageFile(null)
+    setImagePreview(promo.imagen_url || null)
     setShowForm(true)
   }
 
@@ -66,12 +102,29 @@ export default function PromocionesPanel() {
     if (!form.titulo.trim() || !form.descripcion.trim() || !form.precio) return
     setSaving(true)
 
+    let imagenUrl = form.imagen_url.trim() || null
+
+    // Si hay un archivo nuevo, subirlo
+    if (imageFile) {
+      try {
+        // Si editando y ya tenia imagen, eliminar la vieja
+        if (editingId && form.imagen_url) {
+          await eliminarImagenStorage(form.imagen_url)
+        }
+        imagenUrl = await subirImagen(imageFile)
+      } catch (err) {
+        console.error('Error subiendo imagen:', err)
+        setSaving(false)
+        return
+      }
+    }
+
     const row = {
       titulo: form.titulo.trim(),
       descripcion: form.descripcion.trim(),
       precio: Number(form.precio),
       precio_original: form.precio_original ? Number(form.precio_original) : null,
-      imagen_url: form.imagen_url.trim() || null,
+      imagen_url: imagenUrl,
       fecha_inicio: form.fecha_inicio || null,
       fecha_fin: form.fecha_fin || null,
       activa: form.activa,
@@ -86,6 +139,8 @@ export default function PromocionesPanel() {
     setSaving(false)
     setShowForm(false)
     setEditingId(null)
+    setImageFile(null)
+    setImagePreview(null)
     fetchPromos()
   }
 
@@ -97,6 +152,11 @@ export default function PromocionesPanel() {
 
   // ── Eliminar ──
   const handleEliminar = async (id) => {
+    // Eliminar imagen del bucket si existe
+    const promo = promos.find(p => p.id === id)
+    if (promo?.imagen_url) {
+      await eliminarImagenStorage(promo.imagen_url)
+    }
     await supabase.from('promociones').delete().eq('id', id)
     setConfirmDelete(null)
     fetchPromos()
@@ -201,16 +261,70 @@ export default function PromocionesPanel() {
             </div>
           </div>
 
-          {/* URL imagen */}
+          {/* Imagen */}
           <div>
-            <label className="font-brinnan" style={labelStyle}>URL de imagen</label>
+            <label className="font-brinnan" style={labelStyle}>Imagen</label>
             <input
-              type="text"
-              value={form.imagen_url}
-              onChange={e => setForm({ ...form, imagen_url: e.target.value })}
-              placeholder="https://..."
-              style={inputStyle}
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
             />
+
+            {/* Preview */}
+            {imagePreview && (
+              <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    width: '100%',
+                    maxHeight: '160px',
+                    objectFit: 'cover',
+                    borderRadius: '10px',
+                    display: 'block',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImageFile(null)
+                    setImagePreview(null)
+                    setForm({ ...form, imagen_url: '' })
+                    if (fileInputRef.current) fileInputRef.current.value = ''
+                  }}
+                  style={{
+                    position: 'absolute', top: '6px', right: '6px',
+                    background: 'rgba(0,0,0,0.5)', border: 'none', borderRadius: '50%',
+                    width: '26px', height: '26px', color: '#fff', fontSize: '0.8rem',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    lineHeight: 1,
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="font-brinnan"
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '10px',
+                border: '1.5px dashed rgba(66,38,26,0.25)',
+                fontSize: '0.82rem',
+                color: 'rgba(66,38,26,0.55)',
+                background: 'rgba(66,38,26,0.03)',
+                cursor: 'pointer',
+                textAlign: 'center',
+              }}
+            >
+              {imagePreview ? 'Cambiar imagen' : 'Subir imagen'}
+            </button>
           </div>
 
           {/* Fechas en fila */}
