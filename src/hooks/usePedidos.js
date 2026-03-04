@@ -60,8 +60,11 @@ export default function usePedidos() {
   const [loading, setLoading] = useState(true)
   const [flashRecibido, setFlashRecibido] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
+  const [conexionOk, setConexionOk] = useState(true)
+  const [isOnline, setIsOnline] = useState(navigator.onLine)
   const channelRef = useRef(null)
   const muteUntilRef = useRef(0)
+  const wasDisconnectedRef = useRef(false)
 
   // Cargar pedidos del día al montar
   const cargarPedidos = useCallback(async () => {
@@ -154,6 +157,49 @@ export default function usePedidos() {
     return () => clearInterval(heartbeat)
   }, [setupRealtime])
 
+  // ── Detectar conexión a internet ──
+  useEffect(() => {
+    const goOnline = () => setIsOnline(true)
+    const goOffline = () => setIsOnline(false)
+    window.addEventListener('online', goOnline)
+    window.addEventListener('offline', goOffline)
+    return () => {
+      window.removeEventListener('online', goOnline)
+      window.removeEventListener('offline', goOffline)
+    }
+  }, [])
+
+  // ── Health check cada 15s: verificar conexión con Supabase ──
+  useEffect(() => {
+    const check = async () => {
+      if (!navigator.onLine) {
+        setConexionOk(false)
+        wasDisconnectedRef.current = true
+        return
+      }
+      try {
+        const { error } = await supabase.from('pedidos').select('id').limit(1)
+        if (error) {
+          setConexionOk(false)
+          wasDisconnectedRef.current = true
+        } else {
+          setConexionOk(true)
+          // Si estaba desconectado y ahora se recuperó, refetch + reconectar
+          if (wasDisconnectedRef.current) {
+            wasDisconnectedRef.current = false
+            cargarPedidos()
+            setupRealtime()
+          }
+        }
+      } catch {
+        setConexionOk(false)
+        wasDisconnectedRef.current = true
+      }
+    }
+    const interval = setInterval(check, 15000)
+    return () => clearInterval(interval)
+  }, [cargarPedidos, setupRealtime])
+
   // ── Silenciar alarma por 5 minutos ──
   const silenciar = useCallback(() => {
     muteUntilRef.current = Date.now() + 5 * 60 * 1000
@@ -223,5 +269,7 @@ export default function usePedidos() {
     recargar: cargarPedidos,
     isMuted,
     silenciar,
+    conexionOk,
+    isOnline,
   }
 }

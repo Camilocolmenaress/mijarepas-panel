@@ -97,6 +97,8 @@ export default function App() {
     countRecibidos,
     isMuted,
     silenciar,
+    conexionOk,
+    isOnline,
   } = usePedidos()
 
   if (!isAuth) return <LoginScreen onAuth={() => setIsAuth(true)} />
@@ -209,6 +211,26 @@ export default function App() {
         {/* Filtro de sede */}
         <FiltroSede sedeActiva={sedeActiva} onChange={setSedeActiva} />
       </header>
+
+      {/* ── BANNER DE CONEXIÓN ────────────────────────────────────────── */}
+      {(!isOnline || !conexionOk) && (
+        <div
+          className="font-brinnan"
+          style={{
+            background: '#E12B4E',
+            color: '#fff',
+            padding: '10px 16px',
+            textAlign: 'center',
+            fontSize: '0.82rem',
+            lineHeight: 1.4,
+            flexShrink: 0,
+          }}
+        >
+          {!isOnline
+            ? '⚠️ Sin conexión a internet. Verifica tu conexión.'
+            : '⚠️ Sin conexión al servidor. Los pedidos nuevos no se mostrarán hasta que se restablezca la conexión.'}
+        </div>
+      )}
 
       {/* ── CONTENIDO ──────────────────────────────────────────────────── */}
       <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', padding: '12px 12px 0' }}>
