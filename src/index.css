@@ -14,6 +14,12 @@
   font-style: normal;
 }
 @font-face {
+  font-family: 'ChreedExtraBold';
+  src: url('/fonts/Chreed-ExtraBold.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
   font-family: 'Brinnan';
   src: url('/fonts/Brinnan Regular.otf') format('opentype');
   font-weight: normal;
@@ -41,6 +47,7 @@ body {
 
 /* ── Clases utilitarias de fuentes ── */
 .font-chreed  { font-family: 'Chreed', sans-serif; }
+.font-chreed-extrabold { font-family: 'ChreedExtraBold', sans-serif; }
 .font-healing { font-family: 'Healing', sans-serif; }
 .font-brinnan { font-family: 'Brinnan', sans-serif; }
 

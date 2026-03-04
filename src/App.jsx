@@ -3,10 +3,11 @@ import usePedidos from './hooks/usePedidos'
 import KanbanBoard from './components/KanbanBoard'
 import Historial from './components/Historial'
 import FiltroSede from './components/FiltroSede'
+import PromocionesPanel from './components/PromocionesPanel'
 import './index.css'
 
 export default function App() {
-  const [tab, setTab] = useState('pedidos')       // 'pedidos' | 'historial'
+  const [tab, setTab] = useState('pedidos')       // 'pedidos' | 'historial' | 'promos'
   const [sedeActiva, setSedeActiva] = useState('Todas')
 
   const {
@@ -86,6 +87,7 @@ export default function App() {
             {[
               { id: 'pedidos', label: '📋 Pedidos' },
               { id: 'historial', label: '📊 Historial' },
+              { id: 'promos', label: '🎉 Promos' },
             ].map(t => (
               <button
                 key={t.id}
@@ -131,10 +133,12 @@ export default function App() {
             onAvanzar={avanzarEstado}
             flashRecibido={flashRecibido}
           />
-        ) : (
+        ) : tab === 'historial' ? (
           <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '16px' }} className="kanban-col">
             <Historial pedidos={pedidosFiltradosHistorial} sedeGlobal={sedeActiva} />
           </div>
+        ) : (
+          <PromocionesPanel />
         )}
       </main>
     </div>
