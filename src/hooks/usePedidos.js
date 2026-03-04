@@ -59,7 +59,9 @@ export default function usePedidos() {
   const [pedidos, setPedidos] = useState([])
   const [loading, setLoading] = useState(true)
   const [flashRecibido, setFlashRecibido] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
   const channelRef = useRef(null)
+  const muteUntilRef = useRef(0)
 
   // Cargar pedidos del día al montar
   const cargarPedidos = useCallback(async () => {
@@ -152,6 +154,40 @@ export default function usePedidos() {
     return () => clearInterval(heartbeat)
   }, [setupRealtime])
 
+  // ── Silenciar alarma por 5 minutos ──
+  const silenciar = useCallback(() => {
+    muteUntilRef.current = Date.now() + 5 * 60 * 1000
+    setIsMuted(true)
+  }, [])
+
+  // ── Alarma persistente: sonar cada 30s si hay pedidos recibidos sin atender ──
+  useEffect(() => {
+    const alarmInterval = setInterval(() => {
+      // Check if mute expired
+      if (muteUntilRef.current && Date.now() > muteUntilRef.current) {
+        muteUntilRef.current = 0
+        setIsMuted(false)
+      }
+
+      // If muted, skip
+      if (muteUntilRef.current && Date.now() < muteUntilRef.current) return
+
+      // Check for recibido pedidos older than 30 seconds
+      const ahora = Date.now()
+      const recibidosViejos = pedidos.filter(p => {
+        if (p.estado !== 'recibido') return false
+        const creado = new Date(p.created_at).getTime()
+        return (ahora - creado) > 30000
+      })
+
+      if (recibidosViejos.length > 0) {
+        reproducirSonido()
+      }
+    }, 30000)
+
+    return () => clearInterval(alarmInterval)
+  }, [pedidos])
+
   // Avanzar estado
   const avanzarEstado = useCallback(async (id, estadoActual) => {
     const ESTADOS = ['recibido', 'en_preparacion', 'listo', 'entregado']
@@ -185,5 +221,7 @@ export default function usePedidos() {
     avanzarEstado,
     countRecibidos,
     recargar: cargarPedidos,
+    isMuted,
+    silenciar,
   }
 }

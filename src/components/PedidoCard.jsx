@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 // Helpers
 function formatHora(isoString) {
   const d = new Date(isoString)
@@ -21,9 +23,16 @@ const ESTADO_CONFIG = {
 
 const METODO_LABELS = { nequi: 'Nequi 📱', bancolombia: 'Bancolombia 🏦', efectivo: 'Efectivo 💵' }
 
+const SIGUIENTE_ESTADO_LABEL = {
+  recibido: 'En preparación',
+  en_preparacion: 'Listo',
+  listo: 'Entregado',
+}
+
 export default function PedidoCard({ pedido, onAvanzar }) {
   const cfg = ESTADO_CONFIG[pedido.estado] || ESTADO_CONFIG.recibido
   const isRecibido = pedido.estado === 'recibido'
+  const [showConfirm, setShowConfirm] = useState(false)
 
   return (
     <div
@@ -101,9 +110,13 @@ export default function PedidoCard({ pedido, onAvanzar }) {
         </div>
 
         {/* Salsas / servilletas */}
-        {(pedido.salsas && pedido.salsas.length > 0) && (
+        {pedido.salsas && (
           <p className="font-brinnan" style={{ fontSize: '0.74rem', color: 'rgba(66,38,26,0.6)', marginBottom: '4px' }}>
-            🫙 Salsas: {Array.isArray(pedido.salsas) ? pedido.salsas.join(', ') : pedido.salsas}
+            🫙 {typeof pedido.salsas === 'string'
+              ? `Salsas: ${pedido.salsas}`
+              : Array.isArray(pedido.salsas)
+                ? `Salsas: ${pedido.salsas.join(', ')}`
+                : 'Con salsas'}
           </p>
         )}
         {pedido.servilletas && (
@@ -134,7 +147,7 @@ export default function PedidoCard({ pedido, onAvanzar }) {
         </div>
         {cfg.btnLabel && (
           <button
-            onClick={() => onAvanzar(pedido.id, pedido.estado)}
+            onClick={() => setShowConfirm(true)}
             className="font-brinnan"
             style={{
               background: cfg.btnColor, color: '#fff',
@@ -149,6 +162,56 @@ export default function PedidoCard({ pedido, onAvanzar }) {
           </button>
         )}
       </div>
+
+      {/* Modal de confirmación */}
+      {showConfirm && (
+        <div
+          onClick={() => setShowConfirm(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 999,
+            background: 'rgba(0,0,0,0.45)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: '#fff', borderRadius: '16px', padding: '24px',
+              maxWidth: '320px', width: '90%', textAlign: 'center',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+            }}
+          >
+            <p className="font-brinnan" style={{ fontSize: '0.95rem', color: '#42261a', marginBottom: '20px', lineHeight: 1.4 }}>
+              ¿Mover pedido <strong>#{numeroPedido(pedido.id)}</strong> a <strong>{SIGUIENTE_ESTADO_LABEL[pedido.estado]}</strong>?
+            </p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="font-brinnan"
+                style={{
+                  padding: '10px 24px', borderRadius: '10px', fontSize: '0.85rem',
+                  border: 'none', background: '#e8ddd4', color: '#42261a',
+                  cursor: 'pointer',
+                }}
+              >
+                No
+              </button>
+              <button
+                onClick={() => { onAvanzar(pedido.id, pedido.estado); setShowConfirm(false) }}
+                className="font-brinnan"
+                style={{
+                  padding: '10px 24px', borderRadius: '10px', fontSize: '0.85rem',
+                  border: 'none', background: cfg.btnColor, color: '#fff',
+                  cursor: 'pointer',
+                  boxShadow: `0 2px 10px ${cfg.btnColor}50`,
+                }}
+              >
+                Sí
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
