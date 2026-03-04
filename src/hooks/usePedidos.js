@@ -79,8 +79,13 @@ export default function usePedidos() {
     pedirPermisoNotificaciones()
   }, [cargarPedidos])
 
-  // Suscripción Realtime
-  useEffect(() => {
+  // ── Crear / reconectar suscripción Realtime ──
+  const setupRealtime = useCallback(() => {
+    // Limpiar canal anterior si existe
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current)
+    }
+
     const channel = supabase
       .channel('pedidos-realtime')
       .on(
@@ -113,10 +118,39 @@ export default function usePedidos() {
       .subscribe()
 
     channelRef.current = channel
-    return () => {
-      supabase.removeChannel(channel)
-    }
   }, [])
+
+  // Suscripción Realtime — montar / desmontar
+  useEffect(() => {
+    setupRealtime()
+    return () => {
+      if (channelRef.current) supabase.removeChannel(channelRef.current)
+    }
+  }, [setupRealtime])
+
+  // MEJORA 1 — Recargar pedidos + reconectar Realtime al volver a la pestaña
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        cargarPedidos()
+        setupRealtime()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
+  }, [cargarPedidos, setupRealtime])
+
+  // MEJORA 2 — Heartbeat cada 30s: verificar que Realtime sigue vivo
+  useEffect(() => {
+    const heartbeat = setInterval(() => {
+      const ch = channelRef.current
+      if (ch && (ch.state === 'closed' || ch.state === 'errored')) {
+        console.warn('Realtime channel lost, reconnecting...')
+        setupRealtime()
+      }
+    }, 30000)
+    return () => clearInterval(heartbeat)
+  }, [setupRealtime])
 
   // Avanzar estado
   const avanzarEstado = useCallback(async (id, estadoActual) => {
