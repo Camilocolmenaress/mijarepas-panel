@@ -194,7 +194,7 @@ export default function PromocionesPanel() {
   // ── FORMULARIO ──
   if (showForm) {
     return (
-      <div style={{ padding: '16px', maxWidth: '560px', margin: '0 auto', width: '100%' }}>
+      <div style={{ padding: '16px', maxWidth: '560px', margin: '0 auto', width: '100%', flex: 1, overflowY: 'auto' }} className="kanban-col">
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
           <button
             onClick={() => { setShowForm(false); setEditingId(null) }}
@@ -212,7 +212,7 @@ export default function PromocionesPanel() {
           </h2>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingBottom: '24px' }}>
           {/* Titulo */}
           <div>
             <label className="font-brinnan" style={labelStyle}>Titulo *</label>
@@ -280,7 +280,7 @@ export default function PromocionesPanel() {
                   alt="Preview"
                   style={{
                     width: '100%',
-                    maxHeight: '160px',
+                    maxHeight: '120px',
                     objectFit: 'cover',
                     borderRadius: '10px',
                     display: 'block',
