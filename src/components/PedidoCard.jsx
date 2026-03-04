@@ -45,7 +45,7 @@ export default function PedidoCard({ pedido, onAvanzar }) {
         background: 'rgba(66,38,26,0.03)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="font-chreed" style={{ fontSize: '1.05rem', color: '#42261a' }}>
+          <span className="font-brinnan" style={{ fontSize: '1.05rem', color: '#42261a' }}>
             #{numeroPedido(pedido.id)}
           </span>
           <span style={{
@@ -64,7 +64,7 @@ export default function PedidoCard({ pedido, onAvanzar }) {
       <div style={{ padding: '10px 12px' }}>
         {/* Cliente */}
         <div style={{ marginBottom: '8px' }}>
-          <p className="font-healing" style={{ fontSize: '1rem', color: '#42261a', lineHeight: 1.3 }}>
+          <p className="font-brinnan" style={{ fontSize: '1rem', color: '#42261a', lineHeight: 1.3 }}>
             {pedido.cliente_nombre}
           </p>
           <p className="font-brinnan" style={{ fontSize: '0.78rem', color: 'rgba(66,38,26,0.65)' }}>
@@ -89,7 +89,7 @@ export default function PedidoCard({ pedido, onAvanzar }) {
           {(pedido.productos || []).map((p, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
               <span className="font-brinnan" style={{ fontSize: '0.8rem', color: '#42261a', lineHeight: 1.35, flex: 1, paddingRight: '8px' }}>
-                <span style={{ fontFamily: 'Chreed', fontSize: '0.85rem', color: '#eb1e55' }}>{p.cantidad}×</span>{' '}
+                <span style={{ fontFamily: 'Brinnan', fontSize: '0.85rem', color: '#eb1e55' }}>{p.cantidad}×</span>{' '}
                 {p.nombre}
                 {p.notas ? <span style={{ color: 'rgba(66,38,26,0.5)', fontSize: '0.72rem' }}> · {p.notas}</span> : null}
               </span>
@@ -125,7 +125,7 @@ export default function PedidoCard({ pedido, onAvanzar }) {
         borderTop: '1px solid rgba(66,38,26,0.08)',
       }}>
         <div>
-          <span className="font-chreed" style={{ fontSize: '1.1rem', color: '#42261a' }}>
+          <span className="font-brinnan" style={{ fontSize: '1.1rem', color: '#42261a' }}>
             {formatCOP(pedido.total)}
           </span>
           <span className="font-brinnan" style={{ fontSize: '0.72rem', color: 'rgba(66,38,26,0.5)', marginLeft: '6px' }}>

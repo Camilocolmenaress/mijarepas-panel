@@ -9,7 +9,7 @@ export default function EstadisticasDia({ pedidos }) {
   if (!pedidos || pedidos.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(66,38,26,0.4)' }}>
-        <p className="font-healing" style={{ fontSize: '1.1rem' }}>Sin pedidos hoy todavía</p>
+        <p className="font-brinnan" style={{ fontSize: '1.1rem' }}>Sin pedidos hoy todavía</p>
       </div>
     )
   }
@@ -54,26 +54,26 @@ export default function EstadisticasDia({ pedidos }) {
       {/* Total pedidos */}
       <div style={cardStyle}>
         <p className="font-brinnan" style={{ fontSize: '0.75rem', color: 'rgba(66,38,26,0.55)', marginBottom: '6px' }}>Total pedidos</p>
-        <p className="font-chreed" style={{ fontSize: '2rem', color: '#eb1e55' }}>{pedidos.length}</p>
+        <p className="font-brinnan" style={{ fontSize: '2rem', color: '#eb1e55' }}>{pedidos.length}</p>
       </div>
 
       {/* Total ventas */}
       <div style={cardStyle}>
         <p className="font-brinnan" style={{ fontSize: '0.75rem', color: 'rgba(66,38,26,0.55)', marginBottom: '6px' }}>Total ventas</p>
-        <p className="font-chreed" style={{ fontSize: '1.5rem', color: '#42261a' }}>{formatCOP(total)}</p>
+        <p className="font-brinnan" style={{ fontSize: '1.5rem', color: '#42261a' }}>{formatCOP(total)}</p>
       </div>
 
       {/* Promedio por pedido */}
       <div style={cardStyle}>
         <p className="font-brinnan" style={{ fontSize: '0.75rem', color: 'rgba(66,38,26,0.55)', marginBottom: '6px' }}>Promedio / pedido</p>
-        <p className="font-chreed" style={{ fontSize: '1.5rem', color: '#42261a' }}>{formatCOP(promedio)}</p>
+        <p className="font-brinnan" style={{ fontSize: '1.5rem', color: '#42261a' }}>{formatCOP(promedio)}</p>
       </div>
 
       {/* Producto top */}
       {productoTop && (
         <div style={cardStyle}>
           <p className="font-brinnan" style={{ fontSize: '0.75rem', color: 'rgba(66,38,26,0.55)', marginBottom: '6px' }}>⭐ Producto top</p>
-          <p className="font-healing" style={{ fontSize: '0.95rem', color: '#42261a', lineHeight: 1.3 }}>{productoTop[0]}</p>
+          <p className="font-brinnan" style={{ fontSize: '0.95rem', color: '#42261a', lineHeight: 1.3 }}>{productoTop[0]}</p>
           <p className="font-brinnan" style={{ fontSize: '0.78rem', color: '#eb1e55' }}>{productoTop[1]} und</p>
         </div>
       )}
@@ -87,7 +87,7 @@ export default function EstadisticasDia({ pedidos }) {
               <div key={s.sede} style={{
                 background: 'rgba(66,38,26,0.05)', borderRadius: '8px', padding: '6px 10px',
               }}>
-                <p className="font-healing" style={{ fontSize: '0.85rem', color: '#42261a' }}>{s.sede}</p>
+                <p className="font-brinnan" style={{ fontSize: '0.85rem', color: '#42261a' }}>{s.sede}</p>
                 <p className="font-brinnan" style={{ fontSize: '0.75rem', color: 'rgba(66,38,26,0.6)' }}>
                   {s.count} pedido{s.count !== 1 ? 's' : ''} · {formatCOP(s.total)}
                 </p>

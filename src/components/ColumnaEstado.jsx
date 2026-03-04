@@ -30,7 +30,7 @@ export default function ColumnaEstado({ estado, pedidos, onAvanzar, flash }) {
         marginBottom: '2px',
       }}>
         <span style={{ fontSize: '1.1rem' }}>{info.emoji}</span>
-        <span className="font-healing" style={{ fontSize: '1rem', color: '#42261a' }}>{info.label}</span>
+        <span className="font-brinnan" style={{ fontSize: '1rem', color: '#42261a' }}>{info.label}</span>
         <span style={{
           marginLeft: 'auto', background: info.color, color: '#fff',
           borderRadius: '12px', padding: '1px 8px', fontSize: '0.78rem',

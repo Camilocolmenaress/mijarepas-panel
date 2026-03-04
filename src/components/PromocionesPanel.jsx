@@ -186,7 +186,7 @@ export default function PromocionesPanel() {
   if (loading) {
     return (
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
-        <p className="font-healing" style={{ color: 'rgba(66,38,26,0.5)' }}>Cargando promociones...</p>
+        <p className="font-brinnan" style={{ color: 'rgba(66,38,26,0.5)' }}>Cargando promociones...</p>
       </div>
     )
   }
@@ -207,7 +207,7 @@ export default function PromocionesPanel() {
           >
             ←
           </button>
-          <h2 className="font-chreed-extrabold" style={{ fontSize: '1.2rem', color: 'var(--terrocana)' }}>
+          <h2 className="font-brinnan" style={{ fontSize: '1.2rem', color: 'var(--terrocana)' }}>
             {editingId ? 'Editar Promocion' : 'Nueva Promocion'}
           </h2>
         </div>
@@ -376,7 +376,7 @@ export default function PromocionesPanel() {
           <button
             onClick={handleGuardar}
             disabled={saving || !form.titulo.trim() || !form.descripcion.trim() || !form.precio}
-            className="font-chreed-extrabold"
+            className="font-brinnan"
             style={{
               width: '100%', padding: '14px',
               background: '#E12B4E', color: '#fff',
@@ -399,12 +399,12 @@ export default function PromocionesPanel() {
     <div style={{ padding: '12px', flex: 1, overflowY: 'auto' }} className="kanban-col">
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <h2 className="font-chreed-extrabold" style={{ fontSize: '1.1rem', color: 'var(--terrocana)' }}>
+        <h2 className="font-brinnan" style={{ fontSize: '1.1rem', color: 'var(--terrocana)' }}>
           Promociones ({promos.length})
         </h2>
         <button
           onClick={handleNueva}
-          className="font-chreed-extrabold"
+          className="font-brinnan"
           style={{
             background: '#E12B4E', color: '#fff',
             border: 'none', borderRadius: '10px',
@@ -441,7 +441,7 @@ export default function PromocionesPanel() {
           >
             {/* Fila superior: titulo + badge */}
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '6px' }}>
-              <h3 className="font-chreed-extrabold" style={{ fontSize: '1rem', color: 'var(--terrocana)', lineHeight: 1.2 }}>
+              <h3 className="font-brinnan" style={{ fontSize: '1rem', color: 'var(--terrocana)', lineHeight: 1.2 }}>
                 {promo.titulo}
               </h3>
               <span
@@ -472,7 +472,7 @@ export default function PromocionesPanel() {
                   {formatCOP(promo.precio_original)}
                 </span>
               )}
-              <span className="font-chreed-extrabold" style={{ fontSize: '1.05rem', color: 'var(--fucsebollita)' }}>
+              <span className="font-brinnan" style={{ fontSize: '1.05rem', color: 'var(--fucsebollita)' }}>
                 {formatCOP(promo.precio)}
               </span>
             </div>

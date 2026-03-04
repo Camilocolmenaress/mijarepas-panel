@@ -128,7 +128,7 @@ export default function Historial({ pedidos: pedidosHoy, sedeGlobal }) {
         boxShadow: '0 1px 8px rgba(66,38,26,0.08)',
       }}>
         <span style={{ fontSize: '1.1rem' }}>📅</span>
-        <span className="font-healing" style={{ fontSize: '0.95rem', color: '#42261a' }}>
+        <span className="font-brinnan" style={{ fontSize: '0.95rem', color: '#42261a' }}>
           {labelFecha(fechaSeleccionada)}
         </span>
 
@@ -260,7 +260,7 @@ export default function Historial({ pedidos: pedidosHoy, sedeGlobal }) {
           {pedidosFiltrados.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '32px', color: 'rgba(66,38,26,0.35)' }}>
               <p style={{ fontSize: '2rem', marginBottom: '8px' }}>📭</p>
-              <p className="font-healing" style={{ fontSize: '1rem' }}>
+              <p className="font-brinnan" style={{ fontSize: '1rem' }}>
                 Sin pedidos el {labelFecha(fechaSeleccionada).toLowerCase()}
               </p>
             </div>
@@ -276,7 +276,7 @@ export default function Historial({ pedidos: pedidosHoy, sedeGlobal }) {
                   justifyContent: 'space-between',
                 }}>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <span className="font-chreed" style={{ fontSize: '0.9rem', color: '#42261a' }}>
+                    <span className="font-brinnan" style={{ fontSize: '0.9rem', color: '#42261a' }}>
                       #{numeroPedido(p.id)}
                     </span>
                     <span className="font-brinnan" style={{ fontSize: '0.75rem', color: 'rgba(66,38,26,0.55)' }}>
@@ -296,7 +296,7 @@ export default function Historial({ pedidos: pedidosHoy, sedeGlobal }) {
                     </span>
                   </div>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <span className="font-chreed" style={{ fontSize: '0.95rem', color: '#42261a' }}>
+                    <span className="font-brinnan" style={{ fontSize: '0.95rem', color: '#42261a' }}>
                       {formatCOP(p.total)}
                     </span>
                     <span style={{

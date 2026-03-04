@@ -58,10 +58,10 @@ export default function App() {
               <span style={{ fontSize: '1.2rem' }}>🫓</span>
             </div>
             <div>
-              <h1 className="font-chreed" style={{ fontSize: '1.2rem', color: 'var(--boleblanco)', lineHeight: 1 }}>
+              <h1 className="font-brinnan" style={{ fontSize: '1.2rem', color: 'var(--boleblanco)', lineHeight: 1 }}>
                 Mijarepas
               </h1>
-              <p className="font-healing" style={{ fontSize: '0.72rem', color: 'rgba(255,241,210,0.65)', lineHeight: 1 }}>
+              <p className="font-brinnan" style={{ fontSize: '0.72rem', color: 'rgba(255,241,210,0.65)', lineHeight: 1 }}>
                 Panel de pedidos
               </p>
             </div>
@@ -123,7 +123,7 @@ export default function App() {
                 animation: 'spin 0.8s linear infinite',
                 margin: '0 auto 12px',
               }} />
-              <p className="font-healing" style={{ color: 'rgba(66,38,26,0.5)' }}>Cargando pedidos...</p>
+              <p className="font-brinnan" style={{ color: 'rgba(66,38,26,0.5)' }}>Cargando pedidos...</p>
               <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
           </div>
