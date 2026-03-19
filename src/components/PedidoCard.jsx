@@ -124,6 +124,11 @@ export default function PedidoCard({ pedido, onAvanzar }) {
             🧻 Con servilletas
           </p>
         )}
+        {pedido.cubiertos && (
+          <p className="font-brinnan" style={{ fontSize: '0.74rem', color: 'rgba(66,38,26,0.6)', marginBottom: '4px' }}>
+            🍴 Con cubiertos
+          </p>
+        )}
         {pedido.notas && (
           <p className="font-brinnan" style={{ fontSize: '0.74rem', color: 'rgba(66,38,26,0.6)', marginBottom: '4px' }}>
             💬 {pedido.notas}
