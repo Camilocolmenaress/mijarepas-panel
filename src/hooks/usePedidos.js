@@ -62,9 +62,11 @@ export default function usePedidos() {
   const [isMuted, setIsMuted] = useState(false)
   const [conexionOk, setConexionOk] = useState(true)
   const [isOnline, setIsOnline] = useState(navigator.onLine)
+  const [alertaActiva, setAlertaActiva] = useState(false)
   const channelRef = useRef(null)
   const muteUntilRef = useRef(0)
   const wasDisconnectedRef = useRef(false)
+  const alarmIntervalRef = useRef(null)
 
   // Cargar pedidos del día al montar
   const cargarPedidos = useCallback(async () => {
@@ -206,33 +208,46 @@ export default function usePedidos() {
     setIsMuted(true)
   }, [])
 
-  // ── Alarma persistente: sonar cada 30s si hay pedidos recibidos sin atender ──
-  useEffect(() => {
-    const alarmInterval = setInterval(() => {
-      // Check if mute expired
+  // ── Iniciar alarma persistente (beep cada 4s) ──
+  const iniciarAlarma = useCallback(() => {
+    if (alarmIntervalRef.current) return // ya está sonando
+    setAlertaActiva(true)
+    reproducirSonido()
+    alarmIntervalRef.current = setInterval(() => {
+      // Si está silenciado, no sonar pero mantener banner
+      if (muteUntilRef.current && Date.now() < muteUntilRef.current) return
+      // Si el mute expiró, reactivar
       if (muteUntilRef.current && Date.now() > muteUntilRef.current) {
         muteUntilRef.current = 0
         setIsMuted(false)
       }
+      reproducirSonido()
+    }, 4000)
+  }, [])
 
-      // If muted, skip
-      if (muteUntilRef.current && Date.now() < muteUntilRef.current) return
+  // ── Detener alarma ──
+  const detenerAlarma = useCallback(() => {
+    if (alarmIntervalRef.current) {
+      clearInterval(alarmIntervalRef.current)
+      alarmIntervalRef.current = null
+    }
+    setAlertaActiva(false)
+  }, [])
 
-      // Check for recibido pedidos older than 30 seconds
-      const ahora = Date.now()
-      const recibidosViejos = pedidos.filter(p => {
-        if (p.estado !== 'recibido') return false
-        const creado = new Date(p.created_at).getTime()
-        return (ahora - creado) > 30000
-      })
+  // ── Confirmar alerta (botón del banner) ──
+  const confirmarAlerta = useCallback(() => {
+    detenerAlarma()
+  }, [detenerAlarma])
 
-      if (recibidosViejos.length > 0) {
-        reproducirSonido()
-      }
-    }, 30000)
-
-    return () => clearInterval(alarmInterval)
-  }, [pedidos])
+  // ── Activar/desactivar alarma según pedidos recibidos ──
+  useEffect(() => {
+    const hayRecibidos = pedidos.some(p => p.estado === 'recibido')
+    if (hayRecibidos && !alarmIntervalRef.current) {
+      iniciarAlarma()
+    } else if (!hayRecibidos && alarmIntervalRef.current) {
+      detenerAlarma()
+    }
+  }, [pedidos, iniciarAlarma, detenerAlarma])
 
   // Avanzar estado
   const avanzarEstado = useCallback(async (id, estadoActual) => {
@@ -271,5 +286,7 @@ export default function usePedidos() {
     silenciar,
     conexionOk,
     isOnline,
+    alertaActiva,
+    confirmarAlerta,
   }
 }

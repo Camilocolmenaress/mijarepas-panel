@@ -99,6 +99,8 @@ export default function App() {
     silenciar,
     conexionOk,
     isOnline,
+    alertaActiva,
+    confirmarAlerta,
   } = usePedidos()
 
   if (!isAuth) return <LoginScreen onAuth={() => setIsAuth(true)} />
@@ -231,6 +233,35 @@ export default function App() {
             : '⚠️ Sin conexión al servidor. Los pedidos nuevos no se mostrarán hasta que se restablezca la conexión.'}
         </div>
       )}
+
+      {/* ── BANNER DE ALERTA NUEVO PEDIDO ─────────────────────────────── */}
+      {alertaActiva && (
+        <div
+          onClick={confirmarAlerta}
+          className="font-brinnan alerta-parpadeo"
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0,
+            zIndex: 9999,
+            background: '#E12B4E', color: '#fff',
+            padding: '16px 20px',
+            textAlign: 'center',
+            fontSize: '1.1rem',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(225,43,78,0.5)',
+          }}
+        >
+          🔔 NUEVO PEDIDO — Toca para confirmar
+        </div>
+      )}
+      <style>{`
+        @keyframes parpadeo {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        .alerta-parpadeo {
+          animation: parpadeo 1s ease-in-out infinite;
+        }
+      `}</style>
 
       {/* ── CONTENIDO ──────────────────────────────────────────────────── */}
       <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', padding: '12px 12px 0' }}>
