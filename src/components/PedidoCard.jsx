@@ -60,25 +60,64 @@ export default function PedidoCard({ pedido, onAvanzar }) {
     >
       {/* Header */}
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '10px 12px 8px',
         borderBottom: '1px solid rgba(66,38,26,0.08)',
         background: 'rgba(66,38,26,0.03)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="font-brinnan" style={{ fontSize: '1.05rem', color: '#42261a' }}>
-            #{numeroPedido(pedido.id)}
-          </span>
-          <span style={{
-            background: '#42261a', color: '#fff1d2', borderRadius: '10px',
-            padding: '2px 8px', fontSize: '0.7rem', fontFamily: 'Brinnan',
-          }}>
-            📍 {pedido.sede}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="font-brinnan" style={{ fontSize: '1.05rem', color: '#42261a' }}>
+              #{numeroPedido(pedido.id)}
+            </span>
+            <span style={{
+              background: '#42261a', color: '#fff1d2', borderRadius: '10px',
+              padding: '2px 8px', fontSize: '0.7rem', fontFamily: 'Brinnan',
+            }}>
+              📍 {pedido.sede}
+            </span>
+          </div>
+          <span className="font-brinnan" style={{ fontSize: '0.78rem', color: 'rgba(66,38,26,0.6)' }}>
+            {formatHora(pedido.created_at)}
           </span>
         </div>
-        <span className="font-brinnan" style={{ fontSize: '0.78rem', color: 'rgba(66,38,26,0.6)' }}>
-          {formatHora(pedido.created_at)}
-        </span>
+        {/* Botones de acción en el header — siempre visibles */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          {cfg.btnLabel && (
+            <button
+              onClick={() => setShowConfirm(true)}
+              className="font-brinnan"
+              style={{
+                flex: 1,
+                background: cfg.btnColor, color: '#fff',
+                border: 'none', borderRadius: '8px',
+                padding: '8px 12px', fontSize: '0.82rem',
+                cursor: 'pointer',
+                boxShadow: `0 2px 8px ${cfg.btnColor}60`,
+                transition: 'opacity 0.15s',
+              }}
+            >
+              {cfg.btnLabel}
+            </button>
+          )}
+          <button
+            onClick={handleReimprimir}
+            disabled={reimprimiendo}
+            className="font-brinnan"
+            style={{
+              background: reimprimiendo ? '#e8ddd4' : 'transparent',
+              color: reimprimiendo ? '#999' : '#42261a',
+              border: '1.5px solid #42261a',
+              borderRadius: '8px',
+              padding: '8px 10px', fontSize: '0.72rem',
+              cursor: reimprimiendo ? 'default' : 'pointer',
+              transition: 'all 0.15s',
+              opacity: reimprimiendo ? 0.6 : 1,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {reimprimiendo ? 'Reimprimiendo...' : '🖨️ Reimprimir'}
+          </button>
+        </div>
       </div>
 
       {/* Body */}
@@ -148,55 +187,18 @@ export default function PedidoCard({ pedido, onAvanzar }) {
         )}
       </div>
 
-      {/* Footer */}
+      {/* Footer — Total y método de pago */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '8px 12px 10px',
         borderTop: '1px solid rgba(66,38,26,0.08)',
       }}>
-        <div>
-          <span className="font-brinnan" style={{ fontSize: '1.1rem', color: '#42261a' }}>
-            {formatCOP(pedido.total)}
-          </span>
-          <span className="font-brinnan" style={{ fontSize: '0.72rem', color: 'rgba(66,38,26,0.5)', marginLeft: '6px' }}>
-            {METODO_LABELS[pedido.metodo_pago] || pedido.metodo_pago}
-          </span>
-        </div>
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          <button
-            onClick={handleReimprimir}
-            disabled={reimprimiendo}
-            className="font-brinnan"
-            style={{
-              background: reimprimiendo ? '#e8ddd4' : 'transparent',
-              color: reimprimiendo ? '#999' : '#42261a',
-              border: '1.5px solid #42261a',
-              borderRadius: '8px',
-              padding: '6px 10px', fontSize: '0.72rem',
-              cursor: reimprimiendo ? 'default' : 'pointer',
-              transition: 'all 0.15s',
-              opacity: reimprimiendo ? 0.6 : 1,
-            }}
-          >
-            {reimprimiendo ? 'Reimprimiendo...' : '🖨️ Reimprimir'}
-          </button>
-          {cfg.btnLabel && (
-            <button
-              onClick={() => setShowConfirm(true)}
-              className="font-brinnan"
-              style={{
-                background: cfg.btnColor, color: '#fff',
-                border: 'none', borderRadius: '8px',
-                padding: '6px 12px', fontSize: '0.78rem',
-                cursor: 'pointer',
-                boxShadow: `0 2px 8px ${cfg.btnColor}60`,
-                transition: 'opacity 0.15s',
-              }}
-            >
-              {cfg.btnLabel}
-            </button>
-          )}
-        </div>
+        <span className="font-brinnan" style={{ fontSize: '1.1rem', color: '#42261a' }}>
+          {formatCOP(pedido.total)}
+        </span>
+        <span className="font-brinnan" style={{ fontSize: '0.72rem', color: 'rgba(66,38,26,0.5)' }}>
+          {METODO_LABELS[pedido.metodo_pago] || pedido.metodo_pago}
+        </span>
       </div>
 
       {/* Modal de confirmación */}
