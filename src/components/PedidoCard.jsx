@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { supabase } from '../lib/supabase'
 
 // Helpers
 function formatHora(isoString) {
@@ -33,6 +34,17 @@ export default function PedidoCard({ pedido, onAvanzar }) {
   const cfg = ESTADO_CONFIG[pedido.estado] || ESTADO_CONFIG.recibido
   const isRecibido = pedido.estado === 'recibido'
   const [showConfirm, setShowConfirm] = useState(false)
+  const [reimprimiendo, setReimprimiendo] = useState(false)
+
+  const handleReimprimir = async () => {
+    setReimprimiendo(true)
+    try {
+      await supabase.from('pedidos').update({ reimprimir: true }).eq('id', pedido.id)
+    } catch (err) {
+      console.error('Error al reimprimir:', err)
+    }
+    setTimeout(() => setReimprimiendo(false), 3000)
+  }
 
   return (
     <div
@@ -150,22 +162,41 @@ export default function PedidoCard({ pedido, onAvanzar }) {
             {METODO_LABELS[pedido.metodo_pago] || pedido.metodo_pago}
           </span>
         </div>
-        {cfg.btnLabel && (
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
           <button
-            onClick={() => setShowConfirm(true)}
+            onClick={handleReimprimir}
+            disabled={reimprimiendo}
             className="font-brinnan"
             style={{
-              background: cfg.btnColor, color: '#fff',
-              border: 'none', borderRadius: '8px',
-              padding: '6px 12px', fontSize: '0.78rem',
-              cursor: 'pointer',
-              boxShadow: `0 2px 8px ${cfg.btnColor}60`,
-              transition: 'opacity 0.15s',
+              background: reimprimiendo ? '#e8ddd4' : 'transparent',
+              color: reimprimiendo ? '#999' : '#42261a',
+              border: '1.5px solid #42261a',
+              borderRadius: '8px',
+              padding: '6px 10px', fontSize: '0.72rem',
+              cursor: reimprimiendo ? 'default' : 'pointer',
+              transition: 'all 0.15s',
+              opacity: reimprimiendo ? 0.6 : 1,
             }}
           >
-            {cfg.btnLabel}
+            {reimprimiendo ? 'Reimprimiendo...' : '🖨️ Reimprimir'}
           </button>
-        )}
+          {cfg.btnLabel && (
+            <button
+              onClick={() => setShowConfirm(true)}
+              className="font-brinnan"
+              style={{
+                background: cfg.btnColor, color: '#fff',
+                border: 'none', borderRadius: '8px',
+                padding: '6px 12px', fontSize: '0.78rem',
+                cursor: 'pointer',
+                boxShadow: `0 2px 8px ${cfg.btnColor}60`,
+                transition: 'opacity 0.15s',
+              }}
+            >
+              {cfg.btnLabel}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Modal de confirmación */}
